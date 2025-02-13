@@ -1,10 +1,10 @@
 import React from 'react'
 import styles from "./Dropdown.module.css";
 
-const Dropdown = ({ options, defaultValue, onChange }) => {
+const Dropdown = ({ options, value, onChange }) => {
   return (
     <select
-      defaultValue={defaultValue}
+      value={value}
       className={styles.select}
       onChange={(e) => onChange(e.target.value)}
     >

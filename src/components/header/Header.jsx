@@ -1,10 +1,11 @@
-import {React, useState} from 'react'
+import {React, useState, useEffect } from 'react'
+import { useTranslation } from "react-i18next";
 import Dropdown from '../dropdown/Dropdown'
 import styles from "./Header.module.css";
 
 const languages = [
-  { value: 'turkish', label: 'Türkçe' },
-  { value: 'english', label: 'English' },
+  { value: 'tr', label: 'Türkçe' },
+  { value: 'en', label: 'English' },
 ];
 
 const currencies = [
@@ -13,13 +14,25 @@ const currencies = [
 ];
 
 const Header = () => {
-  const [selectedLanguage, setSelectedLanguage] = useState("turkish");
+  const { i18n, t } = useTranslation();
+
+  const [selectedLanguage, setSelectedLanguage] = useState("");
   const [selectedCurrency, setSelectedCurrency] = useState("tl");
+
+  useEffect(() => {
+    // Get the base language (e.g., "en" from "en-US")
+    const detectedLanguage = i18n.language.split("-")[0];
+
+    // Set language to Turkish if detected language is Turkish, otherwise default to English
+    const initialLanguage = detectedLanguage === "tr" ? "tr" : "en";
+    setSelectedLanguage(initialLanguage); // Set initial language state
+  }, [i18n.language]);
 
   const handleLanguageChange = (newLanguage) => {
     setSelectedLanguage(newLanguage);
-    console.log("Selected Language:", newLanguage);
-  }
+    i18n.changeLanguage(newLanguage);
+    localStorage.setItem("i18nextLng", newLanguage);
+  };
 
   const handleCurrencyChange = (newCurrency) => {
     setSelectedCurrency(newCurrency);
@@ -37,7 +50,7 @@ const Header = () => {
             METRAJAI
           </div>
           <div className={styles.subtitle}>
-            Building the Future
+            {t("sub-title")}
           </div>
         </div>
       </div>
@@ -45,12 +58,12 @@ const Header = () => {
       <div className={styles.rightSection}>
       <Dropdown
           options={currencies}
-          defaultValue={selectedCurrency}
+          value={selectedCurrency}
           onChange={handleCurrencyChange}
         />
         <Dropdown
           options={languages}
-          defaultValue={selectedLanguage}
+          value={selectedLanguage}
           onChange={handleLanguageChange}
         />
       </div>
